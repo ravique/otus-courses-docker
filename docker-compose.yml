@@ -2,26 +2,23 @@ version: '3.4'
 
 services:
   courses_backend:
-    image: otus
+    image: otus-backend
     build: ./otus-django
     volumes:
-      - static2:/opt/otus-django/otus-courses-website/static
-      - frontend2:/opt/otus-django/otus-courses-website/frontend
+      - media:/opt/otus-django/otus-courses-website/media
     environment:
       - DEBUG=True
       - ALLOWED_HOSTS=0.0.0.0
 
   proxy:
-    image: nginx:alpine
+    image: nginx-proxy
+    build: ./nginx-proxy
     ports:
       - "80:8000"
     volumes:
-      - static2:/static
-      - frontend2:/frontend
-      - ./nginx-config:/etc/nginx/conf.d
+      - media:/opt/media
     depends_on:
       - courses_backend
 
 volumes:
-  static2:
-  frontend2:
+  media:
