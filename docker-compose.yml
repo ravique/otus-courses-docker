@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  courses_backend:
+    image: otus
+    build: ./otus-django
+    volumes:
+      - static2:/opt/otus-django/otus-courses-website/static
+      - frontend2:/opt/otus-django/otus-courses-website/frontend
+    environment:
+      - DEBUG=True
+      - ALLOWED_HOSTS=0.0.0.0
+
+  proxy:
+    image: nginx:alpine
+    ports:
+      - "80:8000"
+    volumes:
+      - static2:/static
+      - frontend2:/frontend
+      - ./nginx-config:/etc/nginx/conf.d
+    depends_on:
+      - courses_backend
+
+volumes:
+  static2:
+  frontend2:
