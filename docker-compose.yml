@@ -1,6 +1,14 @@
 version: '3.4'
 
 services:
+  courses_db:
+    image: postgres:11-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=courses_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=koala
+
   courses_backend:
     image: otus-backend
     build: ./otus-django
@@ -9,6 +17,19 @@ services:
     environment:
       - DEBUG=True
       - ALLOWED_HOSTS=0.0.0.0
+      - DB_DRIVER=postgres
+      - DB_NAME=courses_db
+      - DB_USER=admin
+      - DB_PASSWORD=koala
+      - DB_IP=courses_db
+      - DB_PORT=5432
+      - MONITORING=true
+      - INFLUXDB_HOST=influxdb
+      - INFLUXDB_PORT=8086
+      - INFLUXDB_DB=otus
+
+    depends_on:
+      - courses_db
 
   proxy:
     image: nginx-proxy
@@ -20,5 +41,29 @@ services:
     depends_on:
       - courses_backend
 
+  influxdb:
+    image: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=otus
+    depends_on:
+      - courses_backend
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana:/var/lib/grafana/
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=koala
+    depends_on:
+      - influxdb
+
 volumes:
   media:
+  influxdb:
+  grafana:
