@@ -1,6 +1,6 @@
 # Multi-container docker configuration for otus-courses demo
 
-Without data seed!
+Compose for [Otus courses backend](https://github.com/ravique/otus-courses-backend) and [Otus courses frontend](https://github.com/ravique/otus-courses-react).
 
 ## Install
 
